@@ -27,7 +27,7 @@
                 <div>@lecture: <span class="float-right">@weeklyHours<span class="oi oi-x" @onclick="@(() => this.cal.LectureWeeklyHours.Remove(lecture))"></span></span></div>
             }
             <div>
-                <input type="date" placeholder="Von" @bind="FreeTimeStart" /> - <input type="date" placeholder="Bis" @bind="FreeTimeEnd" /><button disabled="@(FreeTimeStart == null || FreeTimeEnd == null)">Hinzufügen</button>
+                <input type="text" placeholder="Vorlesung/Praktikum/etc." @bind="NewLectureName" /> - <input type="number" placeholder="SWS" @bind="NewLectureSws" /><button disabled="@(NewLectureName == null || NewLectureSws == null)" @onclick="AddLecture">Hinzufügen</button>
             </div>
         </div>
     </div>
@@ -42,10 +42,10 @@
         <div style="padding-left: 50px">
             @foreach (var (start, end) in this.cal.LectureFreeTimes)
             {
-                <div>@start.ToShortDateString() - @end.ToShortDateString()</div>
+                <div>@start.ToShortDateString() - @end.ToShortDateString()<span class="oi oi-x" @onclick="(() => this.cal.LectureFreeTimes.Remove((start, end)))"></span></div>
             }
             <div>
-                <input type="date" placeholder="Von" @bind="FreeTimeStart" /> - <input type="date" placeholder="Bis" @bind="FreeTimeEnd" /><button disabled="@(FreeTimeStart == null || FreeTimeEnd == null)">Hinzufügen</button>
+                <input type="date" placeholder="Von" @bind="FreeTimeStart" /> - <input type="date" placeholder="Bis" @bind="FreeTimeEnd" /><button disabled="@(FreeTimeStart == null || FreeTimeEnd == null)" @onclick="AddNewLectureFreeTime">Hinzufügen</button>
             </div>
         </div>
     </div>
@@ -73,5 +73,27 @@
     private void Refresh()
     {
         cal = new LectureCal(this.StartDate!.Value, this.EndDate!.Value);
+    }
+
+    private string? NewLectureName { get; set; }
+    private int? NewLectureSws { get; set; }
+    private void AddLecture()
+    {
+        if (NewLectureName != null && NewLectureSws.HasValue)
+        {
+            cal!.LectureWeeklyHours[NewLectureName] = NewLectureSws.Value;
+            NewLectureName = null;
+            NewLectureSws = null;
+        }
+    }
+
+    private void AddNewLectureFreeTime()
+    {
+        if (FreeTimeStart.HasValue && FreeTimeEnd.HasValue)
+        {
+            cal!.LectureFreeTimes.Add((FreeTimeStart.Value, FreeTimeEnd.Value));
+            FreeTimeStart = null;
+            FreeTimeEnd = null;
+        }
     }
 }
