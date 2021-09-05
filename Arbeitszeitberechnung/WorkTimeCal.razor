@@ -21,7 +21,7 @@
     </div>
     <div>
         <h5>Vorlesungen</h5>
-        <div style="padding-left: 50px; width: 40%;">
+        <div class="pl-md-3 col-md-6 col-lg-4">
             @foreach (var (lecture, weeklyHours) in this.cal.LectureWeeklyHours)
             {
                 <div>@lecture: <span class="float-right">@weeklyHours<span class="oi oi-x" @onclick="@(() => this.cal.LectureWeeklyHours.Remove(lecture))"></span></span></div>
@@ -39,7 +39,7 @@
     </div>
     <div>
         <h5>Vorlesungsfreie Zeiten</h5>
-        <div style="padding-left: 50px">
+        <div class="pl-md-3">
             @foreach (var (start, end) in this.cal.LectureFreeTimes)
             {
                 <div>@start.ToShortDateString() - @end.ToShortDateString()<span class="oi oi-x" @onclick="(() => this.cal.LectureFreeTimes.Remove((start, end)))"></span></div>
