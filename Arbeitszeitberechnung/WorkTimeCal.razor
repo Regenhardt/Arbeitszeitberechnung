@@ -1,5 +1,4 @@
-﻿@using System.Runtime.CompilerServices
-<h3>Work Time during Lectures Calculator</h3>
+﻿<h3>Work Time during Lectures Calculator</h3>
 
 <div>
     <label for="startDate">Vorlesungszeitraum Anfang</label>
@@ -8,23 +7,23 @@
     <input type="date" id="endDate" @bind="EndDate" />
 </div>
 <button disabled="@(StartDate == null || EndDate == null)" @onclick="Refresh">Refresh</button>
-@if (cal != null)
+@if (Cal != null)
 {
     <div>
-        Tage im Vorlesungszeitraum: @this.cal!.Days
+        Tage im Vorlesungszeitraum: @Cal!.Days
     </div>
     <div>
-        Werktage pro Woche: <input type="number" @bind="cal.WorkDaysPerWeek" />
+        Werktage pro Woche: <input type="number" @bind="Cal.WorkDaysPerWeek" />
     </div>
     <div>
-        Stunden pro Tag: <input type="number" @bind="cal.FullTimeHoursPerWorkDay" />
+        Stunden pro Tag: <input type="number" @bind="Cal.FullTimeHoursPerWorkDay" />
     </div>
     <div>
         <h5>Vorlesungen</h5>
         <div class="pl-md-3 col-md-6 col-lg-4">
-            @foreach (var (lecture, weeklyHours) in this.cal.LectureWeeklyHours)
+            @foreach (var (lecture, weeklyHours) in Cal.LectureWeeklyHours)
             {
-                <div>@lecture: <span class="float-right">@weeklyHours<span class="oi oi-x" @onclick="@(() => this.cal.LectureWeeklyHours.Remove(lecture))"></span></span></div>
+                <div>@lecture: <span class="float-right">@weeklyHours<span class="oi oi-x" @onclick="@(() => Cal.LectureWeeklyHours.Remove(lecture))"></span></span></div>
             }
             <div>
                 <input type="text" placeholder="Vorlesung/Praktikum/etc." @bind="NewLectureName" /> - <input type="number" placeholder="SWS" @bind="NewLectureSws" /><button disabled="@(NewLectureName == null || NewLectureSws == null)" @onclick="AddLecture">Hinzufügen</button>
@@ -32,17 +31,17 @@
         </div>
     </div>
     <div>
-        Semesterwochenstunden (SWS, Vorlesungsstunden pro Woche): @this.cal.WeeklyLearningHours
+        Semesterwochenstunden (SWS, Vorlesungsstunden pro Woche): @Cal.WeeklyLearningHours
     </div>
     <div>
-        Feier- oder Urlaubstage: <input type="number" @bind="this.cal.HolidaysDuringLectureFreeTimes" />
+        Feier- oder Urlaubstage: <input type="number" @bind="Cal.HolidaysDuringLectureFreeTimes" />
     </div>
     <div>
         <h5>Vorlesungsfreie Zeiten</h5>
         <div class="pl-md-3">
-            @foreach (var (start, end) in this.cal.LectureFreeTimes)
+            @foreach (var (start, end) in Cal.LectureFreeTimes)
             {
-                <div>@start.ToShortDateString() - @end.ToShortDateString()<span class="oi oi-x" @onclick="(() => this.cal.LectureFreeTimes.Remove((start, end)))"></span></div>
+                <div>@start.ToShortDateString() - @end.ToShortDateString()<span class="oi oi-x" @onclick="(() => Cal.LectureFreeTimes.Remove((start, end)))"></span></div>
             }
             <div>
                 <input type="date" placeholder="Von" @bind="FreeTimeStart" /> - <input type="date" placeholder="Bis" @bind="FreeTimeEnd" /><button disabled="@(FreeTimeStart == null || FreeTimeEnd == null)" @onclick="AddNewLectureFreeTime">Hinzufügen</button>
@@ -50,32 +49,32 @@
         </div>
     </div>
     <div>
-        Gesamtstunden während des Semesters: @this.cal.OverallHoursDuringSemester
+        Gesamtstunden während des Semesters: @Cal.OverallHoursDuringSemester
     </div>
     <div>
-        Dessen Äquivalent in Vollzeittagen: @this.cal.OverallEquivalentFulltimeDaysDuringSemester
+        Dessen Äquivalent in Vollzeittagen: @Cal.OverallEquivalentFulltimeDaysDuringSemester
     </div>
     <div>
-        Zusätzliche Arbeitsstunden außerhalb des Semesters: <input type="number" @bind="this.cal.AdditionalWorkHoursOutsideSemester" />
+        Zusätzliche Arbeitsstunden außerhalb des Semesters: <input type="number" @bind="Cal.AdditionalWorkHoursOutsideSemester" />
     </div>
     <div>
-        Gesamtstunden: @this.cal.OverallWorkHours
+        Gesamtstunden: @Cal.OverallWorkHours
     </div>
     <div>
-        Dessen Äquivalent in Vollzeittagen: @this.cal.OverallEquivalentFulltimeDays
+        Dessen Äquivalent in Vollzeittagen: @Cal.OverallEquivalentFulltimeDays
     </div>
 }
 
 @code {
     private DateTime? StartDate { get; set; } = new DateTime(2021, 10, 11);
     private DateTime? EndDate { get; set; } = new DateTime(2022, 2, 28);
-    private LectureCal? cal { get; set; }
+    private LectureCal? Cal { get; set; }
     private DateTime? FreeTimeStart { get; set; }
     private DateTime? FreeTimeEnd { get; set; }
 
     private void Refresh()
     {
-        cal = new LectureCal(this.StartDate!.Value, this.EndDate!.Value);
+        Cal = new LectureCal(StartDate!.Value, EndDate!.Value);
     }
 
     private string? NewLectureName { get; set; }
@@ -84,7 +83,7 @@
     {
         if (NewLectureName != null && NewLectureSws.HasValue)
         {
-            cal!.LectureWeeklyHours[NewLectureName] = NewLectureSws.Value;
+            Cal!.LectureWeeklyHours[NewLectureName] = NewLectureSws.Value;
             NewLectureName = null;
             NewLectureSws = null;
         }
@@ -94,7 +93,7 @@
     {
         if (FreeTimeStart.HasValue && FreeTimeEnd.HasValue)
         {
-            cal!.LectureFreeTimes.Add((FreeTimeStart.Value, FreeTimeEnd.Value));
+            Cal!.LectureFreeTimes.Add((FreeTimeStart.Value, FreeTimeEnd.Value));
             FreeTimeStart = null;
             FreeTimeEnd = null;
         }

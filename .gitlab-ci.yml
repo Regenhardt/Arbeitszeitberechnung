@@ -1,6 +1,10 @@
 stages:
   - build
+  - publish
+  - deploy
 
+variables:
+  PUBLISH_OUTPUT_DIR: publish
   
 build:
   stage: build
@@ -11,3 +15,30 @@ build:
   artifacts:
     paths:
       - "**/bin"
+
+publish:
+  stage: publish
+  image: mcr.microsoft.com/dotnet/sdk:latest
+  interruptible: true
+  script:
+      - dotnet publish -c Release -o $PUBLISH_OUTPUT_DIR
+  artifacts:
+    paths:
+      - $PUBLISH_OUTPUT_DIR
+    expire_in: 1 day
+  only:
+      - master
+
+pages:
+  stage: deploy
+  variables:
+    SED_COMMAND: 's#<base\shref="\/"\s?\/>#<base href="\/$CI_PROJECT_NAME\/" \/>#g'
+  interruptible: true
+  script:
+    - cp -a $PUBLISH_OUTPUT_DIR/wwwroot public
+    - sed -r -i "$SED_COMMAND" public/index.html
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
