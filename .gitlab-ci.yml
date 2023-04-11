@@ -31,12 +31,9 @@ publish:
 
 pages:
   stage: deploy
-  variables:
-    SED_COMMAND: 's#<base\shref="\/"\s?\/>#<base href="\/$CI_PROJECT_NAME\/" \/>#g'
   interruptible: true
   script:
     - cp -a $PUBLISH_OUTPUT_DIR/wwwroot public
-    - sed -r -i "$SED_COMMAND" public/index.html
   artifacts:
     paths:
       - public
